@@ -1,15 +1,13 @@
 import express from 'express'
-import userRouter from './user.routes'
+import usersRouter from './routes/users.routes'
 
 const PORT = 4000
 const app = express()
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+app.use(express.json())
 
-app.use('/user', userRouter)
+app.use('/users', usersRouter)
 
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`)
+  console.log(`Server is running on port ${PORT}`)
 })
