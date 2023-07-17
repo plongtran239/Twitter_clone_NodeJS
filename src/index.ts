@@ -1,7 +1,15 @@
-const hello = 'Hello World!'
+import express from 'express'
+import userRouter from './user.routes'
 
-const test = () => {
-  console.log(hello)
-}
+const PORT = 4000
+const app = express()
 
-test()
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.use('/user', userRouter)
+
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`)
+})
