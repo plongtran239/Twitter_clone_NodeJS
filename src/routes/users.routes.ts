@@ -6,9 +6,13 @@ import { loginController, registerController } from '~/controllers/users.control
 // Middlewares
 import { loginValidator, registerValidator } from '~/middlewares/users.middlewares'
 
+// Utils
+import { wrapRequestHandler } from '~/utils/handlers'
+
 const usersRouter = Router()
 
 usersRouter.post('/login', loginValidator, loginController)
-usersRouter.post('/register', registerValidator, registerController)
+
+usersRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
 
 export default usersRouter
