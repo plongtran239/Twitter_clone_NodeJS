@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb'
 import { USERS_MESSAGES } from '~/constants/messages'
 
 // Models
-import { RegisterRequestBody } from '~/models/requests/User.requests'
+import { LogoutRequestBody, RegisterRequestBody } from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schemas'
 
 // Services
@@ -27,5 +27,13 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
   return res.json({
     message: USERS_MESSAGES.REGISTER_SUCCESS,
     result
+  })
+}
+
+export const logoutController = async (req: Request<ParamsDictionary, any, LogoutRequestBody>, res: Response) => {
+  const { refresh_token } = req.body
+  usersService.logout(refresh_token)
+  return res.json({
+    message: USERS_MESSAGES.LOGOUT_SUCCESS
   })
 }
