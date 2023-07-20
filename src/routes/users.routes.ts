@@ -1,11 +1,17 @@
 import { Router } from 'express'
 
 // Controllers
-import { loginController, logoutController, registerController } from '~/controllers/users.controllers'
+import {
+  emailVerifyController,
+  loginController,
+  logoutController,
+  registerController
+} from '~/controllers/users.controllers'
 
 // Middlewares
 import {
   accessTokenValidator,
+  emailVerifyTokenValidator,
   loginValidator,
   refreshTokenValidator,
   registerValidator
@@ -53,5 +59,15 @@ usersRouter.post('/register', registerValidator, wrapRequestHandler(registerCont
  * }
  */
 usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
+
+/**
+ * Path: /verify-email
+ * Method: POST
+ * Description: Verify email when user click on the link in email
+ * Body: {
+ *  email-verify-token: string
+ * }
+ */
+usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(emailVerifyController))
 
 export default usersRouter
