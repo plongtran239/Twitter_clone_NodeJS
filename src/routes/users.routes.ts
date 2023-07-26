@@ -2,6 +2,7 @@ import { Router } from 'express'
 
 // Controllers
 import {
+  forgotPasswordController,
   loginController,
   logoutController,
   registerController,
@@ -12,6 +13,7 @@ import {
 // Middlewares
 import {
   accessTokenValidator,
+  forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
   registerValidator,
@@ -81,5 +83,15 @@ usersRouter.post('/verify-email', verifyEmailTokenValidator, wrapRequestHandler(
  * Body: {}
  */
 usersRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
+
+/**
+ * Path: /forgot-password
+ * Method: POST
+ * Description: Send email with link to user
+ * Body: {
+ *  email: string
+ * }
+ */
+usersRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
 
 export default usersRouter

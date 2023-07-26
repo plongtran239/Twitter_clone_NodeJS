@@ -13,6 +13,7 @@ import {
   LogoutRequestBody,
   RegisterRequestBody,
   VerifyEmailRequestBody,
+  ForgotPasswordRequestBody,
   TokenPayload
 } from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schemas'
@@ -96,5 +97,17 @@ export const resendVerifyEmailController = async (req: Request, res: Response) =
 
   return res.json({
     message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESS
+  })
+}
+
+export const forgotPasswordController = async (
+  req: Request<ParamsDictionary, any, ForgotPasswordRequestBody>,
+  res: Response
+) => {
+  const { _id } = req.user as User
+  await usersService.forgotPassword((_id as ObjectId).toString())
+
+  return res.json({
+    message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
   })
 }
