@@ -133,15 +133,15 @@ class UsersService {
         {
           _id: new ObjectId(user_id)
         },
-        [
-          {
-            $set: {
-              email_verify_token: '',
-              verify: UserVerifyStatus.Verified,
-              updated_at: '$$NOW'
-            }
+        {
+          $set: {
+            email_verify_token: '',
+            verify: UserVerifyStatus.Verified
+          },
+          $currentDate: {
+            updated_at: true
           }
-        ]
+        }
       )
     ])
     const [access_token, refresh_token] = token
@@ -178,15 +178,37 @@ class UsersService {
       {
         _id: new ObjectId(user_id)
       },
-      [
-        {
-          $set: {
-            forgot_password_token,
-            updated_at: '$$NOW'
-          }
+
+      {
+        $set: {
+          forgot_password_token
+        },
+        $currentDate: {
+          updated_at: true
         }
-      ]
+      }
     )
+
+    return
+  }
+
+  async resetPassword(user_id: string, password: string) {
+    await databaseService.users.updateOne(
+      {
+        _id: new ObjectId(user_id)
+      },
+      {
+        $set: {
+          forgot_password_token: '',
+          password: hashPassword(password)
+        },
+        $currentDate: {
+          updated_at: true
+        }
+      }
+    )
+
+    return
   }
 }
 
