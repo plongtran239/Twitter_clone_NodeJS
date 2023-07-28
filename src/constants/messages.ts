@@ -23,6 +23,7 @@ export const USERS_MESSAGES = {
   LOGOUT_SUCCESS: 'Logout successfully',
   VERIFY_EMAIL_SUCCESS: 'Verify email successfully',
   RESET_PASSWORD_SUCCESS: 'Reset password successfully',
+  GET_ME_SUCCESS: 'Get my profile successfully',
   ACCESS_TOKEN_IS_REQUIRED: 'Access token is required',
   REFRESH_TOKEN_IS_REQUIRED: 'Refresh token is required',
   REFRESH_TOKEN_IS_INVALID: 'Refresh token is invalid',
