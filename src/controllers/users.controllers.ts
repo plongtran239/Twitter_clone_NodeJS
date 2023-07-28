@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { pick } from 'lodash'
 import { ObjectId } from 'mongodb'
 
 // Constants
@@ -15,8 +16,9 @@ import {
   VerifyEmailRequestBody,
   ForgotPasswordRequestBody,
   VerifyForgotPasswordRequestBody,
-  resetPasswordRequestBody,
-  TokenPayload
+  ResetPasswordRequestBody,
+  TokenPayload,
+  UpdateMeRequestBody
 } from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schemas'
 
@@ -27,7 +29,7 @@ import usersService from '~/services/users.services'
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User
   const user_id = user._id as ObjectId
-  const result = await usersService.login(user_id.toString())
+  const result = await usersService.login({ user_id: user_id.toString(), verify: user.verify })
   return res.json({
     message: USERS_MESSAGES.LOGIN_SUCCESS,
     result
@@ -106,8 +108,8 @@ export const forgotPasswordController = async (
   req: Request<ParamsDictionary, any, ForgotPasswordRequestBody>,
   res: Response
 ) => {
-  const { _id } = req.user as User
-  await usersService.forgotPassword((_id as ObjectId).toString())
+  const { _id, verify } = req.user as User
+  await usersService.forgotPassword({ user_id: (_id as ObjectId).toString(), verify })
 
   return res.json({
     message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
@@ -124,7 +126,7 @@ export const verifyForgotPasswordController = async (
 }
 
 export const resetPasswordController = async (
-  req: Request<ParamsDictionary, any, resetPasswordRequestBody>,
+  req: Request<ParamsDictionary, any, ResetPasswordRequestBody>,
   res: Response
 ) => {
   const { user_id } = req.decoded_forgot_password_token as TokenPayload
@@ -142,5 +144,16 @@ export const getMeController = async (req: Request, res: Response) => {
   return res.json({
     message: USERS_MESSAGES.GET_ME_SUCCESS,
     user
+  })
+}
+
+export const updateMeController = async (req: Request<ParamsDictionary, any, UpdateMeRequestBody>, res: Response) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const { body } = req
+  const result = await usersService.updateMe(user_id, body)
+
+  return res.json({
+    message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
+    result
   })
 }

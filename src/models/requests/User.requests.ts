@@ -31,10 +31,21 @@ export interface VerifyForgotPasswordRequestBody {
   forgot_password_token: string
 }
 
-export interface resetPasswordRequestBody {
+export interface ResetPasswordRequestBody {
   password: string
   confirm_password: string
   forgot_password_token: string
+}
+
+export interface UpdateMeRequestBody {
+  name?: string
+  date_of_birth?: string
+  bio?: string
+  location?: string
+  website?: string
+  username?: string
+  avatar?: string
+  cover_photo?: string
 }
 
 export interface TokenPayload extends JwtPayload {
