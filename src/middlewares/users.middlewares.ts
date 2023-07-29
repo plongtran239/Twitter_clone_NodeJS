@@ -282,7 +282,7 @@ export const refreshTokenValidator = validate(
                   token: value,
                   secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
                 }),
-                databaseService.refreshToken.findOne({ token: value })
+                databaseService.refreshTokens.findOne({ token: value })
               ])
               if (refresh_token === null) {
                 throw new ErrorWithStatus({
@@ -475,6 +475,48 @@ export const updateMeValidator = validate(
       },
       avatar: imageSchema,
       cover_photo: imageSchema
+    },
+    ['body']
+  )
+)
+
+export const followValidator = validate(
+  checkSchema(
+    {
+      followed_user_id: {
+        custom: {
+          options: (value, { req }) => {
+            if (!ObjectId.isValid(value)) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.INVALID_FOLLOWED_USER_ID,
+                status: HTTP_STATUS.NOT_FOUND
+              })
+            }
+
+            const followed_user = databaseService.users.findOne({
+              _id: new ObjectId(value)
+            })
+
+            if (followed_user === null) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.USER_NOT_FOUND,
+                status: HTTP_STATUS.NOT_FOUND
+              })
+            }
+
+            const { user_id } = (req as Request).decoded_authorization as TokenPayload
+
+            if (value === user_id) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.CANNOT_FOLLOW_YOURSELF,
+                status: HTTP_STATUS.BAD_REQUEST
+              })
+            }
+
+            return true
+          }
+        }
+      }
     },
     ['body']
   )

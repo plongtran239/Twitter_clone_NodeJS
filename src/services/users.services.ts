@@ -5,6 +5,7 @@ import { config } from 'dotenv'
 // Models
 import User from '~/models/schemas/User.schemas'
 import RefreshToken from '~/models/schemas/RefreshToken.schemas'
+import Follower from '~/models/schemas/Follower.schemas'
 import { RegisterRequestBody, UpdateMeRequestBody } from '~/models/requests/User.requests'
 import { ErrorWithStatus } from '~/models/Errors'
 
@@ -99,7 +100,7 @@ class UsersService {
       verify: UserVerifyStatus.Unverified
     })
 
-    await databaseService.refreshToken.insertOne(
+    await databaseService.refreshTokens.insertOne(
       new RefreshToken({
         user_id: new ObjectId(user_id),
         token: refresh_token
@@ -124,7 +125,7 @@ class UsersService {
       user_id,
       verify
     })
-    await databaseService.refreshToken.insertOne(
+    await databaseService.refreshTokens.insertOne(
       new RefreshToken({
         user_id: new ObjectId(user_id),
         token: refresh_token
@@ -137,7 +138,7 @@ class UsersService {
   }
 
   async logout(refresh_token: string) {
-    await databaseService.refreshToken.deleteOne({ token: refresh_token })
+    await databaseService.refreshTokens.deleteOne({ token: refresh_token })
     return
   }
 
@@ -292,6 +293,28 @@ class UsersService {
     }
 
     return user
+  }
+
+  async follow(user_id: string, followed_user_id: string) {
+    const follower = await databaseService.followers.findOne({
+      user_id: new ObjectId(user_id),
+      followed_user_id: new ObjectId(followed_user_id)
+    })
+    if (follower === null) {
+      await databaseService.followers.insertOne(
+        new Follower({
+          user_id: new ObjectId(user_id),
+          followed_user_id: new ObjectId(followed_user_id)
+        })
+      )
+      return {
+        message: USERS_MESSAGES.FOLLOW_SUCCESS
+      }
+    }
+
+    return {
+      message: USERS_MESSAGES.FOLLOWED
+    }
   }
 }
 

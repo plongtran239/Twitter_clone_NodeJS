@@ -2,6 +2,7 @@ import { Router } from 'express'
 
 // Controllers
 import {
+  followController,
   forgotPasswordController,
   getMeController,
   getProfileController,
@@ -18,6 +19,7 @@ import {
 // Middlewares
 import {
   accessTokenValidator,
+  followValidator,
   forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
@@ -176,5 +178,24 @@ usersRouter.patch(
  * Description: Get user profile
  */
 usersRouter.get('/:username', wrapRequestHandler(getProfileController))
+
+/**
+ * Path: /follow
+ * Method: POST
+ * Description: Follow a user
+ * Header: {
+ *  Authorization: Bearer <access_token>
+ * }
+ * Body: {
+ *  followed_user_id: string
+ * }
+ */
+usersRouter.post(
+  '/follow',
+  accessTokenValidator,
+  verifiedUserValidator,
+  followValidator,
+  wrapRequestHandler(followController)
+)
 
 export default usersRouter

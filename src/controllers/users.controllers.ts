@@ -19,7 +19,8 @@ import {
   ResetPasswordRequestBody,
   TokenPayload,
   UpdateMeRequestBody,
-  GetProfileRequestParams
+  GetProfileRequestParams,
+  FollowRequestBody
 } from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schemas'
 
@@ -168,4 +169,12 @@ export const getProfileController = async (req: Request<GetProfileRequestParams>
     message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
     result
   })
+}
+
+export const followController = async (req: Request<ParamsDictionary, any, FollowRequestBody>, res: Response) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const { followed_user_id } = req.body
+  const result = await usersService.follow(user_id, followed_user_id)
+
+  return res.json(result)
 }
