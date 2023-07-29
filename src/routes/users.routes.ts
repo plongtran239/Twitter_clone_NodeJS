@@ -9,6 +9,7 @@ import {
   getProfileController,
   loginController,
   logoutController,
+  refreshTokenController,
   registerController,
   resendVerifyEmailController,
   resetPasswordController,
@@ -81,6 +82,16 @@ usersRouter.post('/register', registerValidator, wrapRequestHandler(registerCont
  * }
  */
 usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
+
+/**
+ * Path: /refresh-token
+ * Method: POST
+ * Description: Refresh token
+ * Body: {
+ *  refresh_token: string
+ * }
+ */
+usersRouter.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
 
 /**
  * Path: /verify-email
