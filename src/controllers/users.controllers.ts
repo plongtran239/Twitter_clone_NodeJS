@@ -20,9 +20,11 @@ import {
   TokenPayload,
   UpdateMeRequestBody,
   GetProfileRequestParams,
-  FollowRequestBody
+  FollowRequestBody,
+  UnfollowRequestParams
 } from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schemas'
+import { ErrorWithStatus } from '~/models/Errors'
 
 // Services
 import databaseService from '~/services/database.services'
@@ -162,7 +164,6 @@ export const updateMeController = async (req: Request<ParamsDictionary, any, Upd
 
 export const getProfileController = async (req: Request<GetProfileRequestParams>, res: Response) => {
   const { username } = req.params
-  console.log(username)
   const result = await usersService.getProfile(username)
 
   return res.json({
@@ -174,7 +175,30 @@ export const getProfileController = async (req: Request<GetProfileRequestParams>
 export const followController = async (req: Request<ParamsDictionary, any, FollowRequestBody>, res: Response) => {
   const { user_id } = req.decoded_authorization as TokenPayload
   const { followed_user_id } = req.body
+
+  if (followed_user_id === user_id) {
+    throw new ErrorWithStatus({
+      message: USERS_MESSAGES.CANNOT_FOLLOW_YOURSELF,
+      status: HTTP_STATUS.BAD_REQUEST
+    })
+  }
+
   const result = await usersService.follow(user_id, followed_user_id)
+
+  return res.json(result)
+}
+
+export const unfollowController = async (req: Request<UnfollowRequestParams>, res: Response) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const { user_id: followed_user_id } = req.params
+  const result = await usersService.unfollow(user_id, followed_user_id)
+
+  if (followed_user_id === user_id) {
+    throw new ErrorWithStatus({
+      message: USERS_MESSAGES.CANNOT_UNFOLLOW_YOURSELF,
+      status: HTTP_STATUS.BAD_REQUEST
+    })
+  }
 
   return res.json(result)
 }
