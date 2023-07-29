@@ -6,7 +6,7 @@ import { config } from 'dotenv'
 import User from '~/models/schemas/User.schemas'
 import RefreshToken from '~/models/schemas/RefreshToken.schemas'
 import Follower from '~/models/schemas/Follower.schemas'
-import { RegisterRequestBody, UpdateMeRequestBody } from '~/models/requests/User.requests'
+import { ChangePasswordRequestBody, RegisterRequestBody, UpdateMeRequestBody } from '~/models/requests/User.requests'
 import { ErrorWithStatus } from '~/models/Errors'
 
 // Utils
@@ -335,6 +335,24 @@ class UsersService {
     return {
       message: USERS_MESSAGES.ALREADY_UNFOLLOWED
     }
+  }
+
+  async changePassword(user_id: string, new_password: string) {
+    await databaseService.users.updateOne(
+      {
+        _id: new ObjectId(user_id)
+      },
+      {
+        $set: {
+          password: hashPassword(new_password)
+        },
+        $currentDate: {
+          updated_at: true
+        }
+      }
+    )
+
+    return
   }
 }
 

@@ -21,7 +21,8 @@ import {
   UpdateMeRequestBody,
   GetProfileRequestParams,
   FollowRequestBody,
-  UnfollowRequestParams
+  UnfollowRequestParams,
+  ChangePasswordRequestBody
 } from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schemas'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -201,4 +202,16 @@ export const unfollowController = async (req: Request<UnfollowRequestParams>, re
   }
 
   return res.json(result)
+}
+
+export const changePasswordController = async (
+  req: Request<ParamsDictionary, any, ChangePasswordRequestBody>,
+  res: Response
+) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  await usersService.changePassword(user_id, req.body.password)
+
+  return res.json({
+    message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS
+  })
 }

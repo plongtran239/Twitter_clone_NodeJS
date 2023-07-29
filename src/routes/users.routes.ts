@@ -2,6 +2,7 @@ import { Router } from 'express'
 
 // Controllers
 import {
+  changePasswordController,
   followController,
   forgotPasswordController,
   getMeController,
@@ -20,6 +21,7 @@ import {
 // Middlewares
 import {
   accessTokenValidator,
+  changePasswordValidator,
   followValidator,
   forgotPasswordValidator,
   loginValidator,
@@ -216,4 +218,24 @@ usersRouter.delete(
   wrapRequestHandler(unfollowController)
 )
 
+/**
+ * Path: /change-password
+ * Method: PUT
+ * Description: Change password
+ * Header: {
+ *  Authorization: Bearer <access_token>
+ * }
+ * Body: {
+ *  old_password: string
+ *  password: string
+ *  confirm_password: string
+ * }
+ */
+usersRouter.put(
+  '/change-password',
+  accessTokenValidator,
+  verifiedUserValidator,
+  changePasswordValidator,
+  wrapRequestHandler(changePasswordController)
+)
 export default usersRouter

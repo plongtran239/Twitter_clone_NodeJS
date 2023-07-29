@@ -21,6 +21,7 @@ import { verifyToken } from '~/utils/jwt'
 // Models
 import { ErrorWithStatus } from '~/models/Errors'
 import { TokenPayload } from '~/models/requests/User.requests'
+import { REGEX_USERNAME } from '~/constants/regex'
 
 const nameSchema: ParamSchema = {
   notEmpty: {
@@ -117,7 +118,10 @@ const confirmPasswordSchema: ParamSchema = {
   custom: {
     options: (value, { req }) => {
       if (value !== req.body.password) {
-        throw new Error(USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD)
+        throw new ErrorWithStatus({
+          message: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD,
+          status: HTTP_STATUS.BAD_REQUEST
+        })
       }
       return true
     }
@@ -497,6 +501,19 @@ export const updateMeValidator = validate(
             max: 50
           },
           errorMessage: USERS_MESSAGES.USERNAME_LENGTH_MUST_BE_FROM_1_TO_50
+        },
+        custom: {
+          options: async (value: string, { req }) => {
+            if (!REGEX_USERNAME.test(value)) {
+              throw new Error(USERS_MESSAGES.INVALID_USERNAME)
+            }
+
+            const user = await databaseService.users.findOne({ username: value })
+
+            if (user !== null) {
+              throw new Error(USERS_MESSAGES.USERNAME_EXISTED)
+            }
+          }
         }
       },
       avatar: imageSchema,
@@ -522,4 +539,46 @@ export const unfollowValidator = validate(
     },
     ['params']
   )
+)
+
+export const changePasswordValidator = validate(
+  checkSchema({
+    old_password: {
+      ...passwordSchema,
+      custom: {
+        options: async (value, { req }) => {
+          const { user_id } = (req as Request).decoded_authorization as TokenPayload
+          const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) })
+          if (!user) {
+            throw new ErrorWithStatus({
+              message: USERS_MESSAGES.USER_NOT_FOUND,
+              status: HTTP_STATUS.NOT_FOUND
+            })
+          }
+          const { password } = user
+          if (password !== hashPassword(value)) {
+            throw new ErrorWithStatus({
+              message: USERS_MESSAGES.OLD_PASSWORD_NOT_MATCHED,
+              status: HTTP_STATUS.UNAUTHORIZED
+            })
+          }
+        }
+      }
+    },
+    password: {
+      ...passwordSchema,
+      custom: {
+        options: (value, { req }) => {
+          if (value === req.body.old_password) {
+            throw new ErrorWithStatus({
+              message: USERS_MESSAGES.NEW_PASSWORD_CANNOT_BE_THE_SAME,
+              status: HTTP_STATUS.BAD_REQUEST
+            })
+          }
+          return true
+        }
+      }
+    },
+    confirm_password: confirmPasswordSchema
+  })
 )

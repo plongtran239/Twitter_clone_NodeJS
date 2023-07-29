@@ -55,5 +55,11 @@ export const USERS_MESSAGES = {
   CANNOT_FOLLOW_YOURSELF: 'Can not follow yourself',
   UNFOLLOW_SUCCESS: 'Unfollow successfully',
   ALREADY_UNFOLLOWED: 'Already unfollow',
-  CANNOT_UNFOLLOW_YOURSELF: 'Can not unfollow yourself'
+  CANNOT_UNFOLLOW_YOURSELF: 'Can not unfollow yourself',
+  INVALID_USERNAME:
+    'Username must be 4 - 15 characters long and contain only letters, numbers, underscores and not only numbers',
+  USERNAME_EXISTED: 'Username already exists',
+  OLD_PASSWORD_NOT_MATCHED: 'Old password not matched',
+  NEW_PASSWORD_CANNOT_BE_THE_SAME: 'New password cannot be the same as old password',
+  CHANGE_PASSWORD_SUCCESS: 'Change password successfully'
 } as const
