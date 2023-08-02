@@ -1,6 +1,7 @@
 import databaseService from './database.services'
 import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
+import axios from 'axios'
 
 // Models
 import User from '~/models/schemas/User.schemas'
@@ -137,6 +138,85 @@ class UsersService {
     }
   }
 
+  private async getOAuthGoogleToken(code: string) {
+    const body = {
+      code,
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      grant_type: 'authorization_code'
+    }
+    const { data } = await axios.post('https://oauth2.googleapis.com/token', body, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+    return data as {
+      access_token: string
+      id_token: string
+    }
+  }
+
+  private async getGoogleUserInfo(access_token: string, id_token: string) {
+    const { data } = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo', {
+      params: {
+        access_token,
+        alt: 'json'
+      },
+      headers: {
+        Authorization: `Bearer ${id_token}`
+      }
+    })
+    return data as {
+      id: string
+      email: string
+      verified_email: boolean
+      name: string
+      given_name: string
+      family_name: string
+      picture: string
+      locale: string
+    }
+  }
+
+  async oauth(code: string) {
+    const { access_token, id_token } = await this.getOAuthGoogleToken(code)
+    const userInfo = await this.getGoogleUserInfo(access_token, id_token)
+    if (!userInfo.verified_email) {
+      throw new ErrorWithStatus({
+        message: USERS_MESSAGES.GMAIL_NOT_VERIFIED,
+        status: HTTP_STATUS.BAD_REQUEST
+      })
+    }
+    const user = await databaseService.users.findOne({ email: userInfo.email })
+
+    if (user) {
+      const data = await this.login({
+        user_id: user._id.toString(),
+        verify: user.verify
+      })
+      return {
+        ...data,
+        new_user: 0,
+        verify: user.verify
+      }
+    } else {
+      const tempPassword = Math.random().toString(36).substring(2, 7)
+      const data = await this.register({
+        name: userInfo.name,
+        email: userInfo.email,
+        date_of_birth: new Date().toISOString(),
+        password: tempPassword,
+        confirm_password: tempPassword
+      })
+      return {
+        ...data,
+        new_user: 1,
+        verify: UserVerifyStatus.Unverified
+      }
+    }
+  }
+
   async logout(refresh_token: string) {
     await databaseService.refreshTokens.deleteOne({ token: refresh_token })
     return
@@ -192,6 +272,12 @@ class UsersService {
       )
     ])
     const [access_token, refresh_token] = token
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({
+        user_id: new ObjectId(user_id),
+        token: refresh_token
+      })
+    )
     return { access_token, refresh_token }
   }
 

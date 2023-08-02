@@ -9,6 +9,7 @@ import {
   getProfileController,
   loginController,
   logoutController,
+  oauthController,
   refreshTokenController,
   registerController,
   resendVerifyEmailController,
@@ -55,6 +56,16 @@ const usersRouter = Router()
  * }
  */
 usersRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
+
+/**
+ * Path: /oauth/google
+ * Method: GET
+ * Description: OAuth with Google
+ * Body: {
+ *  code: string
+ * }
+ */
+usersRouter.get('/oauth/google', wrapRequestHandler(oauthController))
 
 /**
  * Path: /register
