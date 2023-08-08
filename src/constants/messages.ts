@@ -65,3 +65,7 @@ export const USERS_MESSAGES = {
   REFRESH_TOKEN_SUCCESS: 'Refresh token successfully',
   GMAIL_NOT_VERIFIED: 'Gmail not verified'
 } as const
+
+export const MEDIAS_MESSAGES = {
+  UPLOAD_IMAGE_SUCCESS: 'Upload image successfully'
+}

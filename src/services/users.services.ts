@@ -7,7 +7,7 @@ import axios from 'axios'
 import User from '~/models/schemas/User.schemas'
 import RefreshToken from '~/models/schemas/RefreshToken.schemas'
 import Follower from '~/models/schemas/Follower.schemas'
-import { ChangePasswordRequestBody, RegisterRequestBody, UpdateMeRequestBody } from '~/models/requests/User.requests'
+import { RegisterRequestBody, UpdateMeRequestBody } from '~/models/requests/User.requests'
 import { ErrorWithStatus } from '~/models/Errors'
 
 // Utils

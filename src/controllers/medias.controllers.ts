@@ -1,21 +1,26 @@
-import { NextFunction, Request, Response } from 'express'
-import formidable from 'formidable'
+import { Request, Response } from 'express'
 import path from 'path'
 
-export const uploadSingleImageController = async (req: Request, res: Response, next: NextFunction) => {
-  const form = formidable({
-    uploadDir: path.resolve('uploads'),
-    maxFiles: 1,
-    keepExtensions: true,
-    maxFileSize: 300 * 1024 // 300 kBs
-  })
+// Constants
+import { UPLOAD_DIR } from '~/constants/dir'
+import { MEDIAS_MESSAGES } from '~/constants/messages'
 
-  form.parse(req, (err, fields, files) => {
+// Services
+import mediasService from '~/services/medias.services'
+
+export const uploadImageController = async (req: Request, res: Response) => {
+  const result = await mediasService.uploadImage(req)
+  return res.json({
+    message: MEDIAS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
+    result
+  })
+}
+
+export const serveImageController = (req: Request, res: Response) => {
+  const { name } = req.params
+  return res.sendFile(path.resolve(UPLOAD_DIR, name), (err) => {
     if (err) {
-      throw err
+      res.status((err as any).status).send('Not Found')
     }
-    res.json({
-      message: 'Upload image successfully'
-    })
   })
 }
