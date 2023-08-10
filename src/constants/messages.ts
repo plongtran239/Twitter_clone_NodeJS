@@ -67,5 +67,6 @@ export const USERS_MESSAGES = {
 } as const
 
 export const MEDIAS_MESSAGES = {
-  UPLOAD_IMAGE_SUCCESS: 'Upload image successfully'
+  UPLOAD_IMAGE_SUCCESS: 'Upload image successfully',
+  UPLOAD_VIDEO_SUCCESS: 'Upload video successfully'
 }
