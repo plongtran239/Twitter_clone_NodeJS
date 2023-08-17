@@ -22,6 +22,8 @@ config()
 
 databaseService.connect().then(() => {
   databaseService.indexUsers()
+  databaseService.indexRefreshTokens()
+  databaseService.indexFollowers()
 })
 const PORT = process.env.PORT || 4000
 const app = express()
