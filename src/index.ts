@@ -15,11 +15,14 @@ import { defaultErrorHandler } from './middlewares/error.middlewares'
 // Utils
 import { initFolder } from './utils/file'
 
+// Constants
 import { UPLOAD_VIDEO_DIR } from './constants/dir'
 
 config()
 
-databaseService.connect()
+databaseService.connect().then(() => {
+  databaseService.indexUsers()
+})
 const PORT = process.env.PORT || 4000
 const app = express()
 
