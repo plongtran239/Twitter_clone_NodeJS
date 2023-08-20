@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 
 // Constants
-import { BOOKMARKS_MESSAGES } from '~/constants/messages'
 
 // Models
 import { BookmarkTweetRequestBody } from '~/models/requests/Bookmark.requests'
@@ -17,5 +16,11 @@ export const bookmarkTweetController = async (
 ) => {
   const { user_id } = req.decoded_authorization as TokenPayload
   const result = await bookmarksService.bookmarkTweet(user_id, req.body.tweet_id)
+  return res.json(result)
+}
+
+export const unbookmarkTweetController = async (req: Request, res: Response) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const result = await bookmarksService.unbookmarkTweet(user_id, req.params.tweet_id)
   return res.json(result)
 }

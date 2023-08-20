@@ -1,15 +1,19 @@
-import { NextFunction, Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import { isEmpty } from 'lodash'
-import { ParamSchema, checkSchema } from 'express-validator'
+import { checkSchema } from 'express-validator'
 
 // Constants
 import { MediaType, TweetAudience, TweetType } from '~/constants/enums'
 import { TWEETS_MESSAGES } from '~/constants/messages'
+import { ErrorWithStatus } from '~/models/Errors'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 // Utils
 import { validate } from '~/utils/validation'
 import { numberEnumToArray } from '~/utils/commons'
+
+// Services
+import databaseService from '~/services/database.services'
 
 const tweetTypes = numberEnumToArray(TweetType)
 const tweetAudiences = numberEnumToArray(TweetAudience)
@@ -120,5 +124,36 @@ export const createTweetValidator = validate(
       }
     },
     ['body']
+  )
+)
+
+export const tweetIdValidator = validate(
+  checkSchema(
+    {
+      tweet_id: {
+        custom: {
+          options: async (value, { req }) => {
+            if (!ObjectId.isValid(value)) {
+              throw new ErrorWithStatus({
+                message: TWEETS_MESSAGES.INVALID_TWEET_ID,
+                status: HTTP_STATUS.BAD_REQUEST
+              })
+            }
+
+            const tweet = await databaseService.tweets.findOne({
+              _id: new ObjectId(value)
+            })
+            if (!tweet) {
+              throw new ErrorWithStatus({
+                message: TWEETS_MESSAGES.TWEET_NOT_FOUND,
+                status: HTTP_STATUS.NOT_FOUND
+              })
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body', 'params']
   )
 )

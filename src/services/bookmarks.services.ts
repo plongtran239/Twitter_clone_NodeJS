@@ -24,12 +24,33 @@ class BookmarksService {
         })
       )
       return {
-        message: BOOKMARKS_MESSAGES.BOOKMARKS_SUCCES
+        message: BOOKMARKS_MESSAGES.BOOKMARK_SUCCES
       }
     }
 
     return {
       message: BOOKMARKS_MESSAGES.ALREADY_BOOKMARK
+    }
+  }
+
+  async unbookmarkTweet(user_id: string, tweet_id: string) {
+    const bookmark = await databaseService.bookmarks.findOne({
+      user_id: new ObjectId(user_id),
+      tweet_id: new ObjectId(tweet_id)
+    })
+
+    if (bookmark !== null) {
+      await databaseService.bookmarks.findOneAndDelete({
+        user_id: new ObjectId(user_id),
+        tweet_id: new ObjectId(tweet_id)
+      })
+      return {
+        message: BOOKMARKS_MESSAGES.UNBOOKMARK_SUCCESS
+      }
+    }
+
+    return {
+      message: BOOKMARKS_MESSAGES.ALREADY_UNBOOKMARK
     }
   }
 }
