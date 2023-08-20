@@ -4,7 +4,8 @@ import { config } from 'dotenv'
 import User from '~/models/schemas/User.schemas'
 import RefreshToken from '~/models/schemas/RefreshToken.schemas'
 import Follower from '~/models/schemas/Follower.schemas'
-import Tweet from '~/models/schemas/Tweets.schemas'
+import Tweet from '~/models/schemas/Tweet.schemas'
+import Hashtag from '~/models/schemas/Hashtag.schemas'
 
 config()
 
@@ -96,6 +97,10 @@ class DatabaseService {
 
   get tweets(): Collection<Tweet> {
     return this.db.collection(process.env.DB_TWEETS_COLLECTION as string)
+  }
+
+  get hashtags(): Collection<Hashtag> {
+    return this.db.collection(process.env.DB_HASHTAGS_COLLECTION as string)
   }
 }
 
