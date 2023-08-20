@@ -214,7 +214,6 @@ export const followController = async (req: Request<ParamsDictionary, any, Follo
 export const unfollowController = async (req: Request<UnfollowRequestParams>, res: Response) => {
   const { user_id } = req.decoded_authorization as TokenPayload
   const { user_id: followed_user_id } = req.params
-  const result = await usersService.unfollow(user_id, followed_user_id)
 
   if (followed_user_id === user_id) {
     throw new ErrorWithStatus({
@@ -222,6 +221,8 @@ export const unfollowController = async (req: Request<UnfollowRequestParams>, re
       status: HTTP_STATUS.BAD_REQUEST
     })
   }
+
+  const result = await usersService.unfollow(user_id, followed_user_id)
 
   return res.json(result)
 }

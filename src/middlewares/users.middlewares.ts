@@ -179,7 +179,7 @@ const forgotPasswordTokenSchema: ParamSchema = {
 
 const userIdSchema: ParamSchema = {
   custom: {
-    options: (value, { req }) => {
+    options: async (value, { req }) => {
       if (!ObjectId.isValid(value)) {
         throw new ErrorWithStatus({
           message: USERS_MESSAGES.INVALID_USER_ID,
@@ -187,7 +187,7 @@ const userIdSchema: ParamSchema = {
         })
       }
 
-      const followed_user = databaseService.users.findOne({
+      const followed_user = await databaseService.users.findOne({
         _id: new ObjectId(value)
       })
 
@@ -312,7 +312,7 @@ export const refreshTokenValidator = validate(
                   token: value,
                   secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
                 }),
-                databaseService.refreshTokens.findOne({ token: value })
+                await databaseService.refreshTokens.findOne({ token: value })
               ])
               if (refresh_token === null) {
                 throw new ErrorWithStatus({

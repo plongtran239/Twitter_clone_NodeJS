@@ -16,6 +16,7 @@ const tweetsRouter = Router()
  * Path: /
  * Method: POST
  * Description: Create a new tweet
+ * Header: Bearer <access token>
  * Body: {
  *  type: TweetType
  *  audience: TweetAudience
