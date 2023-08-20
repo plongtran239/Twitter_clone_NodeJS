@@ -4,6 +4,7 @@ import { config } from 'dotenv'
 // Routes
 import usersRouter from './routes/users.routes'
 import mediasRouter from './routes/medias.routes'
+import tweetsRouter from './routes/tweets.routes'
 import staticRouter from './routes/static.routes'
 
 // Databases
@@ -35,6 +36,8 @@ app.use(express.json())
 app.use('/users', usersRouter)
 
 app.use('/medias', mediasRouter)
+
+app.use('/tweets', tweetsRouter)
 
 app.use('/static', staticRouter)
 

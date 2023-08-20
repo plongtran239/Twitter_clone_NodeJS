@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { ParamSchema, check, checkSchema } from 'express-validator'
+import { ParamSchema, checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { capitalize } from 'lodash'
 import { JsonWebTokenError } from 'jsonwebtoken'

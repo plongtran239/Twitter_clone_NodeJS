@@ -69,4 +69,21 @@ export const USERS_MESSAGES = {
 export const MEDIAS_MESSAGES = {
   UPLOAD_IMAGE_SUCCESS: 'Upload image successfully',
   UPLOAD_VIDEO_SUCCESS: 'Upload video successfully'
-}
+} as const
+
+export const TWEETS_MESSAGES = {
+  CREATE_TWEET_SUCCESS: 'Create tweet successfully',
+  TWEET_TYPE_IS_INVALID: 'Tweet type is invalid',
+  TWEET_AUDIENCE_IS_INVALID: 'Tweet audience is invalid',
+  PARENT_ID_MUST_BE_A_VALID_TWEET_ID: 'Parent id must be a valid tweet id',
+  PARENT_ID_MUST_BE_NULL: 'Parent id must be null',
+  CONTENT_MUST_BE_A_STRING: 'Content must be a string',
+  CONTENT_MUST_BE_A_NON_EMPTY_STRING: 'Content must be a non-empty string',
+  CONTENT_MUST_BE_A_EMPTY_STRING: 'Content must be a empty string',
+  HASHTAGS_MUST_BE_AN_ARRAY: 'Hashtags must be an array',
+  HASHTAGS_MUST_BE_AN_ARRAY_OF_STRING: 'Hashtags must be an array of string',
+  MENTIONS_MUST_BE_AN_ARRAY: 'Mentions must be an array',
+  MENTIONS_MUST_BE_AN_ARRAY_OF_USER_ID: 'Mentions must be an array of user id',
+  MEDIAS_MUST_BE_AN_ARRAY: 'Medias must be an array',
+  MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_OBJECT: 'Medias must be an array of media object'
+} as const
