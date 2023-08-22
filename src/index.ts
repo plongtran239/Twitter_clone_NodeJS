@@ -5,6 +5,7 @@ import { config } from 'dotenv'
 import usersRouter from './routes/users.routes'
 import mediasRouter from './routes/medias.routes'
 import tweetsRouter from './routes/tweets.routes'
+import likeRouter from './routes/likes.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
 import staticRouter from './routes/static.routes'
 
@@ -39,6 +40,8 @@ app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 
 app.use('/tweets', tweetsRouter)
+
+app.use('/likes', likeRouter)
 
 app.use('/bookmarks', bookmarksRouter)
 
