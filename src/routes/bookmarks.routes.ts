@@ -16,7 +16,9 @@ const bookmarksRouter = Router()
  * Path: /
  * Method: POST
  * Description: Bookmark a tweet
- * Header: Bearer <access token>
+ * Header: {
+ *  Authorization: Bearer <access_token>
+ * }
  * Body: {
  *  tweet_id: string
  * }
@@ -33,7 +35,9 @@ bookmarksRouter.post(
  * Path: /tweets/:tweet_id
  * Method: DELETE
  * Description: Unbookmark a tweet
- * Header: Bearer <access token>
+ * Header: {
+ *  Authorization: Bearer <access_token>
+ * }
  */
 bookmarksRouter.delete(
   '/tweets/:tweet_id',
