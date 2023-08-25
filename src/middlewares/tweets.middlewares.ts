@@ -12,13 +12,13 @@ import { MediaType, TweetAudience, TweetType, UserVerifyStatus } from '~/constan
 // Utils
 import { validate } from '~/utils/validation'
 import { numberEnumToArray } from '~/utils/commons'
+import { wrapRequestHandler } from '~/utils/handlers'
 
 // Services
 import databaseService from '~/services/database.services'
 
 // Models
 import Tweet from '~/models/schemas/Tweet.schemas'
-import { wrapRequestHandler } from '~/utils/handlers'
 
 const tweetTypes = numberEnumToArray(TweetType)
 const tweetAudiences = numberEnumToArray(TweetAudience)
