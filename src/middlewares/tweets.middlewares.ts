@@ -29,15 +29,15 @@ export const createTweetValidator = validate(
     {
       type: {
         isIn: {
-          options: [tweetTypes]
-        },
-        errorMessage: TWEETS_MESSAGES.TWEET_TYPE_IS_INVALID
+          options: [tweetTypes],
+          errorMessage: TWEETS_MESSAGES.TWEET_TYPE_IS_INVALID
+        }
       },
       audience: {
         isIn: {
-          options: [tweetAudiences]
-        },
-        errorMessage: TWEETS_MESSAGES.TWEET_AUDIENCE_IS_INVALID
+          options: [tweetAudiences],
+          errorMessage: TWEETS_MESSAGES.TWEET_AUDIENCE_IS_INVALID
+        }
       },
       parent_id: {
         custom: {
@@ -222,7 +222,7 @@ export const tweetIdValidator = validate(
                           input: '$tweet_children',
                           as: 'item',
                           cond: {
-                            $eq: ['$$item.type', 1]
+                            $eq: ['$$item.type', TweetType.Retweet]
                           }
                         }
                       }
@@ -233,7 +233,7 @@ export const tweetIdValidator = validate(
                           input: '$tweet_children',
                           as: 'item',
                           cond: {
-                            $eq: ['$$item.type', 2]
+                            $eq: ['$$item.type', TweetType.Comment]
                           }
                         }
                       }
@@ -244,7 +244,7 @@ export const tweetIdValidator = validate(
                           input: '$tweet_children',
                           as: 'item',
                           cond: {
-                            $eq: ['$$item.type', 3]
+                            $eq: ['$$item.type', TweetType.Quotetweet]
                           }
                         }
                       }
@@ -272,6 +272,48 @@ export const tweetIdValidator = validate(
       }
     },
     ['body', 'params']
+  )
+)
+
+export const getTweetChildrenValidator = validate(
+  checkSchema(
+    {
+      tweet_type: {
+        isIn: {
+          options: [tweetTypes],
+          errorMessage: TWEETS_MESSAGES.TWEET_TYPE_IS_INVALID
+        }
+      },
+      limit: {
+        isNumeric: {
+          errorMessage: TWEETS_MESSAGES.LIMIT_MUST_BE_A_NUMBER
+        },
+        custom: {
+          options: (value, { req }) => {
+            const num = Number(value)
+            if (num > 100 || num < 1) {
+              throw new Error(TWEETS_MESSAGES.LIMIT_MAXIMUM_IS_100_AND_MINIMUM_IS_1)
+            }
+            return true
+          }
+        }
+      },
+      page: {
+        isNumeric: {
+          errorMessage: TWEETS_MESSAGES.PAGE_MUST_BE_A_NUMBER
+        },
+        custom: {
+          options: (value, { req }) => {
+            const num = Number(value)
+            if (num < 1) {
+              throw new Error(TWEETS_MESSAGES.PAGE_MINIMUM_IS_1)
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['query']
   )
 )
 

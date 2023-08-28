@@ -89,7 +89,12 @@ export const TWEETS_MESSAGES = {
   INVALID_TWEET_ID: 'Tweet id is invalid',
   TWEET_NOT_FOUND: 'Tweet not found',
   GET_TWEET_SUCCESS: 'Get tweet successfully',
-  TWEET_IS_NOT_PUBLIC: 'Tweet is not public'
+  TWEET_IS_NOT_PUBLIC: 'Tweet is not public',
+  GET_TWEET_CHILDREN_SUCSESS: 'Get tweet children succesfully',
+  LIMIT_MUST_BE_A_NUMBER: 'Limit must be a number',
+  LIMIT_MAXIMUM_IS_100_AND_MINIMUM_IS_1: 'Limit maximum is 100 and minimum is 1',
+  PAGE_MUST_BE_A_NUMBER: 'Page must be a number',
+  PAGE_MINIMUM_IS_1: 'Page minimum is 1'
 } as const
 
 export const BOOKMARKS_MESSAGES = {
