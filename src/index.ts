@@ -17,6 +17,7 @@ import { defaultErrorHandler } from './middlewares/error.middlewares'
 
 // Utils
 import { initFolder } from './utils/file'
+// import './utils/fake'
 
 // Constants
 import { UPLOAD_VIDEO_DIR } from './constants/dir'
