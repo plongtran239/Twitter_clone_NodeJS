@@ -76,6 +76,11 @@ export const getNewsfeedController = async (req: Request<TweetParam, any, any, P
   })
   res.json({
     message: TWEETS_MESSAGES.GET_NEWSFEED_SUCSESS,
-    result
+    result: {
+      tweets: result.tweets,
+      limit,
+      page,
+      total_page: Math.ceil(result.total / limit)
+    }
   })
 }
