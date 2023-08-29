@@ -5,12 +5,18 @@ import { accessTokenValidator, isUserLoginValidator, verifiedUserValidator } fro
 import {
   audienceValidator,
   createTweetValidator,
+  getNewsfeedValidator,
   getTweetChildrenValidator,
   tweetIdValidator
 } from '~/middlewares/tweets.middlewares'
 
 // Controllers
-import { createTweetController, getTweetChildrenController, getTweetController } from '~/controllers/tweets.controllers'
+import {
+  createTweetController,
+  getNewsfeedController,
+  getTweetChildrenController,
+  getTweetController
+} from '~/controllers/tweets.controllers'
 
 // Utils
 import { wrapRequestHandler } from '~/utils/handlers'
@@ -82,4 +88,23 @@ tweetsRouter.get(
   wrapRequestHandler(getTweetChildrenController)
 )
 
+/**
+ * Path: /
+ * Method: GET
+ * Description: Get Newsfeed
+ * Header: {
+ *  Authorization: Bearer <access_token>
+ * }
+ * Query: {
+ *  limit: number,
+ *  page: number,
+ * }
+ */
+tweetsRouter.get(
+  '/',
+  getNewsfeedValidator,
+  accessTokenValidator,
+  verifiedUserValidator,
+  wrapRequestHandler(getNewsfeedController)
+)
 export default tweetsRouter

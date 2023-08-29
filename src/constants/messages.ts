@@ -94,7 +94,8 @@ export const TWEETS_MESSAGES = {
   LIMIT_MUST_BE_A_NUMBER: 'Limit must be a number',
   LIMIT_MAXIMUM_IS_100_AND_MINIMUM_IS_1: 'Limit maximum is 100 and minimum is 1',
   PAGE_MUST_BE_A_NUMBER: 'Page must be a number',
-  PAGE_MINIMUM_IS_1: 'Page minimum is 1'
+  PAGE_MINIMUM_IS_1: 'Page minimum is 1',
+  GET_NEWSFEED_SUCSESS: 'Get newsfeed successfully'
 } as const
 
 export const BOOKMARKS_MESSAGES = {

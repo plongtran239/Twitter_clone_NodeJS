@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash'
 import { ObjectId } from 'mongodb'
-import { checkSchema } from 'express-validator'
+import { checkSchema, ParamSchema } from 'express-validator'
 import { NextFunction, Request, Response } from 'express'
 
 // Constants
@@ -23,6 +23,36 @@ import Tweet from '~/models/schemas/Tweet.schemas'
 const tweetTypes = numberEnumToArray(TweetType)
 const tweetAudiences = numberEnumToArray(TweetAudience)
 const mediaTypes = numberEnumToArray(MediaType)
+
+const limitSchema: ParamSchema = {
+  isNumeric: {
+    errorMessage: TWEETS_MESSAGES.LIMIT_MUST_BE_A_NUMBER
+  },
+  custom: {
+    options: (value, { req }) => {
+      const num = Number(value)
+      if (num > 100 || num < 1) {
+        throw new Error(TWEETS_MESSAGES.LIMIT_MAXIMUM_IS_100_AND_MINIMUM_IS_1)
+      }
+      return true
+    }
+  }
+}
+
+const pageSchema: ParamSchema = {
+  isNumeric: {
+    errorMessage: TWEETS_MESSAGES.PAGE_MUST_BE_A_NUMBER
+  },
+  custom: {
+    options: (value, { req }) => {
+      const num = Number(value)
+      if (num < 1) {
+        throw new Error(TWEETS_MESSAGES.PAGE_MINIMUM_IS_1)
+      }
+      return true
+    }
+  }
+}
 
 export const createTweetValidator = validate(
   checkSchema(
@@ -284,34 +314,8 @@ export const getTweetChildrenValidator = validate(
           errorMessage: TWEETS_MESSAGES.TWEET_TYPE_IS_INVALID
         }
       },
-      limit: {
-        isNumeric: {
-          errorMessage: TWEETS_MESSAGES.LIMIT_MUST_BE_A_NUMBER
-        },
-        custom: {
-          options: (value, { req }) => {
-            const num = Number(value)
-            if (num > 100 || num < 1) {
-              throw new Error(TWEETS_MESSAGES.LIMIT_MAXIMUM_IS_100_AND_MINIMUM_IS_1)
-            }
-            return true
-          }
-        }
-      },
-      page: {
-        isNumeric: {
-          errorMessage: TWEETS_MESSAGES.PAGE_MUST_BE_A_NUMBER
-        },
-        custom: {
-          options: (value, { req }) => {
-            const num = Number(value)
-            if (num < 1) {
-              throw new Error(TWEETS_MESSAGES.PAGE_MINIMUM_IS_1)
-            }
-            return true
-          }
-        }
-      }
+      limit: limitSchema,
+      page: pageSchema
     },
     ['query']
   )
@@ -350,3 +354,13 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
   }
   next()
 })
+
+export const getNewsfeedValidator = validate(
+  checkSchema(
+    {
+      limit: limitSchema,
+      page: pageSchema
+    },
+    ['query']
+  )
+)
