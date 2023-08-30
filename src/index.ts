@@ -21,14 +21,20 @@ import { initFolder } from './utils/file'
 
 // Constants
 import { UPLOAD_VIDEO_DIR } from './constants/dir'
+import searchRouter from './routes/search.routes'
 
 config()
 
-databaseService.connect().then(() => {
-  databaseService.indexUsers()
-  databaseService.indexRefreshTokens()
-  databaseService.indexFollowers()
+databaseService.connect().then(async () => {
+  await Promise.all([
+    databaseService.indexUsers(),
+    databaseService.indexRefreshTokens(),
+    databaseService.indexFollowers(),
+    databaseService.indexTweets(),
+    databaseService.indexHashtags()
+  ])
 })
+
 const PORT = process.env.PORT || 4000
 const app = express()
 
@@ -45,6 +51,8 @@ app.use('/tweets', tweetsRouter)
 app.use('/likes', likeRouter)
 
 app.use('/bookmarks', bookmarksRouter)
+
+app.use('/search', searchRouter)
 
 app.use('/static', staticRouter)
 
