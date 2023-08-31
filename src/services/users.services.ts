@@ -13,6 +13,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 // Utils
 import { hashPassword } from '~/utils/crypto'
 import { signToken, verifyToken } from '~/utils/jwt'
+import { sendForgotPasswordEmail, sendVerifyRegisterEmail } from '~/utils/email'
 
 // Constants
 import { TokenType, UserVerifyStatus } from '~/constants/enums'
@@ -130,7 +131,7 @@ class UsersService {
       })
     )
 
-    console.log('email-verify-token: ', email_verify_token)
+    await sendVerifyRegisterEmail(payload.email, email_verify_token)
 
     return {
       access_token,
@@ -316,9 +317,10 @@ class UsersService {
     return { access_token, refresh_token }
   }
 
-  async resendVerifyEmail(user_id: string) {
+  async resendVerifyEmail(user_id: string, email: string) {
     const email_verify_token = await this.signVerifyEmailToken({ user_id, verify: UserVerifyStatus.Unverified })
-    console.log('Resend email-verify-token: ', email_verify_token)
+
+    await sendVerifyRegisterEmail(email, email_verify_token)
 
     await databaseService.users.updateOne(
       {
@@ -337,10 +339,10 @@ class UsersService {
     return
   }
 
-  async forgotPassword({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+  async forgotPassword({ user_id, verify, email }: { user_id: string; verify: UserVerifyStatus; email: string }) {
     const forgot_password_token = await this.signForgotPasswordToken({ user_id, verify })
 
-    console.log('forgot-password-token: ', forgot_password_token)
+    sendForgotPasswordEmail(email, forgot_password_token)
 
     await databaseService.users.updateOne(
       {
