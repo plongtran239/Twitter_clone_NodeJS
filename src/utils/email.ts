@@ -78,7 +78,7 @@ export const sendVerifyRegisterEmail = (
       .replace('{{title}}', 'Please verify your email')
       .replace('{{content}}', 'Click the button below to verify your email')
       .replace('{{titleLink}}', 'Verify')
-      .replace('{{link}}', `${process.env.CLIENT_URL}/verify-email?token=${email_verify_token}`)
+      .replace('{{link}}', `${process.env.CLIENT_URL}/email-verifications?token=${email_verify_token}`)
   )
 }
 
@@ -94,6 +94,6 @@ export const sendForgotPasswordEmail = (
       .replace('{{title}}', 'You are receiving this email because you requested to reset your password')
       .replace('{{content}}', 'Click the button below to reset your password')
       .replace('{{titleLink}}', 'Reset Password')
-      .replace('{{link}}', `${process.env.CLIENT_URL}/reset-password?token=${forgot_password_token}`)
+      .replace('{{link}}', `${process.env.CLIENT_URL}/forgot-password?token=${forgot_password_token}`)
   )
 }

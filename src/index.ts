@@ -1,5 +1,6 @@
 import express from 'express'
 import { config } from 'dotenv'
+import cors, { CorsOptions } from 'cors'
 
 // Routes
 import usersRouter from './routes/users.routes'
@@ -22,6 +23,7 @@ import { initFolder } from './utils/file'
 // Constants
 import { UPLOAD_VIDEO_DIR } from './constants/dir'
 import searchRouter from './routes/search.routes'
+import { isProduction } from './constants/config'
 
 config()
 
@@ -36,7 +38,13 @@ databaseService.connect().then(async () => {
 })
 
 const PORT = process.env.PORT || 4000
+
 const app = express()
+
+const corsOptions: CorsOptions = {
+  origin: isProduction ? process.env.CLIENT_URL : '*'
+}
+app.use(cors(corsOptions))
 
 initFolder()
 
