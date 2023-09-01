@@ -591,3 +591,12 @@ export const isUserLoginValidator = (middleware: (req: Request, res: Response, n
     next()
   }
 }
+
+export const getConversationsValidator = validate(
+  checkSchema(
+    {
+      receiver_id: userIdSchema
+    },
+    ['params']
+  )
+)

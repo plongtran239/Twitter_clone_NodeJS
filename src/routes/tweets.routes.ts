@@ -5,7 +5,7 @@ import { accessTokenValidator, isUserLoginValidator, verifiedUserValidator } fro
 import {
   audienceValidator,
   createTweetValidator,
-  getNewsfeedValidator,
+  paginationValidator,
   getTweetChildrenValidator,
   tweetIdValidator
 } from '~/middlewares/tweets.middlewares'
@@ -102,7 +102,7 @@ tweetsRouter.get(
  */
 tweetsRouter.get(
   '/',
-  getNewsfeedValidator,
+  paginationValidator,
   accessTokenValidator,
   verifiedUserValidator,
   wrapRequestHandler(getNewsfeedController)

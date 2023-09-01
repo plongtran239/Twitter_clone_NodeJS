@@ -355,7 +355,7 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
   next()
 })
 
-export const getNewsfeedValidator = validate(
+export const paginationValidator = validate(
   checkSchema(
     {
       limit: limitSchema,
