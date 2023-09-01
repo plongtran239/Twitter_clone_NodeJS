@@ -17,8 +17,9 @@ import databaseService from './services/database.services'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 
 // Utils
-import { initFolder } from './utils/file'
 // import './utils/fake'
+import './utils/s3'
+import { initFolder } from './utils/file'
 
 // Constants
 import { UPLOAD_VIDEO_DIR } from './constants/dir'
