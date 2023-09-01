@@ -32,6 +32,12 @@ import { isProduction } from './constants/config'
 
 // Models
 import Conversation from './models/schemas/Conversation.Schemas'
+import { verifyAccessToken } from './utils/commons'
+import { TokenPayload } from './models/requests/User.requests'
+import { UserVerifyStatus } from './constants/enums'
+import { ErrorWithStatus } from './models/Errors'
+import { USERS_MESSAGES } from './constants/messages'
+import HTTP_STATUS from './constants/httpStatus'
 
 config()
 
@@ -93,9 +99,33 @@ const users: {
   }
 } = {}
 
+io.use(async (socket, next) => {
+  const { Authorization } = socket.handshake.auth
+  const access_token = Authorization?.split(' ')[1]
+  try {
+    const decoded_authorization = await verifyAccessToken(access_token)
+    const { verify } = decoded_authorization as TokenPayload
+    if (verify !== UserVerifyStatus.Verified) {
+      throw new ErrorWithStatus({
+        message: USERS_MESSAGES.USER_NOT_VERIFIED,
+        status: HTTP_STATUS.FORBIDDEN
+      })
+    }
+    // Truyền decoded_authorization vào socket để sử dụng ở các middleware khác
+    socket.handshake.auth.decoded_authorization = decoded_authorization
+    next()
+  } catch (error) {
+    next({
+      message: 'Unauthorized',
+      name: 'UnauthorizedError',
+      data: error
+    })
+  }
+})
+
 io.on('connection', (socket) => {
   console.log(`User ${socket.id} connected`)
-  const user_id = socket.handshake.auth._id
+  const { user_id } = socket.handshake.auth.decoded_authorization as TokenPayload
   users[user_id] = {
     socket_id: socket.id
   }
@@ -103,9 +133,7 @@ io.on('connection', (socket) => {
   socket.on('send_message', async (data) => {
     const { receiver_id, sender_id, content } = data.payload
     const receiver_socket_id = users[receiver_id]?.socket_id
-    if (!receiver_socket_id) {
-      return
-    }
+
     const conversation = new Conversation({
       sender_id: new ObjectId(sender_id),
       receiver_id: new ObjectId(receiver_id),
@@ -113,9 +141,11 @@ io.on('connection', (socket) => {
     })
     const result = await databaseService.conversations.insertOne(conversation)
     conversation._id = result.insertedId
-    socket.to(receiver_socket_id).emit('receive_message', {
-      payload: conversation
-    })
+    if (receiver_socket_id) {
+      socket.to(receiver_socket_id).emit('receive_message', {
+        payload: conversation
+      })
+    }
   })
 
   socket.on('disconnect', () => {
