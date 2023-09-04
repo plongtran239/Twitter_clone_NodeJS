@@ -1,6 +1,8 @@
 import express from 'express'
 import cors, { CorsOptions } from 'cors'
 import { createServer } from 'http'
+import rateLimit from 'express-rate-limit'
+import helmet from 'helmet'
 
 // Routes
 import usersRouter from './routes/users.routes'
@@ -42,7 +44,18 @@ const PORT = envConfig.port || 4000
 
 const app = express()
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false // Disable the `X-RateLimit-*` headers
+  // store: ... , // Use an external store for more precise rate limiting
+})
+app.use(limiter)
+
 const httpServer = createServer(app)
+
+app.use(helmet())
 
 const corsOptions: CorsOptions = {
   origin: isProduction ? envConfig.clientURL : '*'
