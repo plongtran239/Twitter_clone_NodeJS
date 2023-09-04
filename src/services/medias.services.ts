@@ -2,7 +2,6 @@ import path from 'path'
 import mime from 'mime'
 import sharp from 'sharp'
 import fsPromise from 'fs/promises'
-import { config } from 'dotenv'
 import { Request } from 'express'
 import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
 
@@ -16,8 +15,6 @@ import { uploadFileToS3 } from '~/utils/s3'
 // Constants
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import { MediaType } from '~/constants/enums'
-
-config()
 
 class MediasService {
   async uploadImage(req: Request) {

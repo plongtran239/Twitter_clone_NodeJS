@@ -8,6 +8,8 @@ import { JsonWebTokenError } from 'jsonwebtoken'
 import { USERS_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { UserVerifyStatus } from '~/constants/enums'
+import { envConfig } from '~/constants/config'
+import { REGEX_USERNAME } from '~/constants/regex'
 
 // Services
 import databaseService from '~/services/database.services'
@@ -17,12 +19,11 @@ import usersService from '~/services/users.services'
 import { validate } from '~/utils/validation'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
+import { verifyAccessToken } from '~/utils/commons'
 
 // Models
 import { ErrorWithStatus } from '~/models/Errors'
 import { TokenPayload } from '~/models/requests/User.requests'
-import { REGEX_USERNAME } from '~/constants/regex'
-import { verifyAccessToken } from '~/utils/commons'
 
 const nameSchema: ParamSchema = {
   notEmpty: {
@@ -142,7 +143,7 @@ const forgotPasswordTokenSchema: ParamSchema = {
       try {
         const decoded_forgot_password_token = await verifyToken({
           token: value,
-          secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
+          secretOrPublicKey: envConfig.jwtSecretForgotPasswordToken
         })
         const { user_id } = decoded_forgot_password_token
         const user = await databaseService.users.findOne({
@@ -293,7 +294,7 @@ export const refreshTokenValidator = validate(
               const [decoded_refresh_token, refresh_token] = await Promise.all([
                 verifyToken({
                   token: value,
-                  secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
+                  secretOrPublicKey: envConfig.jwtSecretRefreshToken
                 }),
                 await databaseService.refreshTokens.findOne({ token: value })
               ])
@@ -339,7 +340,7 @@ export const verifyEmailTokenValidator = validate(
             try {
               const decoded_email_verify_token = await verifyToken({
                 token: value,
-                secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
+                secretOrPublicKey: envConfig.jwtSecretEmailVerifyToken
               })
 
               ;(req as Request).decoded_email_verify_token = decoded_email_verify_token

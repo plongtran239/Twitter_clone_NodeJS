@@ -5,6 +5,7 @@ import { JsonWebTokenError } from 'jsonwebtoken'
 
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
+import { envConfig } from '~/constants/config'
 
 import { ErrorWithStatus } from '~/models/Errors'
 
@@ -22,7 +23,7 @@ export const verifyAccessToken = async (access_token: string, req?: Request) => 
   try {
     const decoded_authorization = await verifyToken({
       token: access_token,
-      secretOrPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
+      secretOrPublicKey: envConfig.jwtSecretAccessToken as string
     })
     if (req) {
       ;(req as Request).decoded_authorization = decoded_authorization

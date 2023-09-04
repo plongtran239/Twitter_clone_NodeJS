@@ -1,5 +1,4 @@
 import express from 'express'
-import { config } from 'dotenv'
 import cors, { CorsOptions } from 'cors'
 import { createServer } from 'http'
 
@@ -27,9 +26,7 @@ import initSocket from './utils/socket'
 
 // Constants
 import { UPLOAD_VIDEO_DIR } from './constants/dir'
-import { isProduction } from './constants/config'
-
-config()
+import { envConfig, isProduction } from './constants/config'
 
 databaseService.connect().then(async () => {
   await Promise.all([
@@ -41,14 +38,14 @@ databaseService.connect().then(async () => {
   ])
 })
 
-const PORT = process.env.PORT || 4000
+const PORT = envConfig.port || 4000
 
 const app = express()
 
 const httpServer = createServer(app)
 
 const corsOptions: CorsOptions = {
-  origin: isProduction ? process.env.CLIENT_URL : '*'
+  origin: isProduction ? envConfig.clientURL : '*'
 }
 app.use(cors(corsOptions))
 
